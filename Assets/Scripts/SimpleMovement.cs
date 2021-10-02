@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Data;
 using UnityEngine;
 
 public class SimpleMovement : MonoBehaviour
@@ -8,10 +9,13 @@ public class SimpleMovement : MonoBehaviour
     [SerializeField] private float unitSize;
 
     private Transform _transform;
+
+    public DialogueText dialogueText;
     
     void Start()
     {
         _transform = transform;
+        dialogueText.ParseTextFile();
     }
 
     private void Update()

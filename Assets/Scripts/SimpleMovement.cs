@@ -8,8 +8,6 @@ public class SimpleMovement : MonoBehaviour
     [SerializeField] private float unitSize;
 
     private Transform _transform;
-
-    private Vector3 _movement;
     
     void Start()
     {
@@ -18,13 +16,27 @@ public class SimpleMovement : MonoBehaviour
 
     private void Update()
     {
-        if ((_movement.z = Input.GetAxis("Vertical")) != 0)
+        if (Input.GetKeyDown(KeyCode.A))
         {
-            
+            MoveStep(Vector3.left);
         }
-        else if ((_movement.x = Input.GetAxis("Horizontal")) != 0)
+        else if (Input.GetKeyDown(KeyCode.S))
         {
-            
+            MoveStep(Vector3.back);
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            MoveStep(Vector3.right);
+        }
+        else if (Input.GetKeyDown(KeyCode.W))
+        {
+            MoveStep(Vector3.forward);
         }
     }
+
+    private void MoveStep(Vector3 movement)
+    {
+        _transform.Translate(movement * unitSize);
+    }
+    
 }

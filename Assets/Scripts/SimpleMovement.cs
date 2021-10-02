@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using MonsterLove.StateMachine;
 using UnityEngine;
 
 public class SimpleMovement : MonoBehaviour
@@ -8,6 +9,41 @@ public class SimpleMovement : MonoBehaviour
     [SerializeField] private float unitSize;
 
     private Transform _transform;
+    public enum States
+    {
+        Init,
+        ActionSelection,
+        EffectSelection,
+        EnemyTurn
+    }
+    
+    private StateMachine<States, StateDriverRunner> _fsm;
+    
+    private void Awake()
+    {
+        _fsm = new StateMachine<States, StateDriverRunner>(this);
+        _fsm.ChangeState(States.Init);
+    }
+
+    void Init_Enter()
+    {
+        _fsm.ChangeState(States.ActionSelection);
+    }
+
+    void Init_Update()
+    {
+        
+    }
+
+    void ActionSelection_Enter()
+    {
+        
+    }
+    
+    void ActionSelection_Update()
+    {
+        
+    }
     
     void Start()
     {
@@ -16,27 +52,8 @@ public class SimpleMovement : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            MoveStep(Vector3.left);
-        }
-        else if (Input.GetKeyDown(KeyCode.S))
-        {
-            MoveStep(Vector3.back);
-        }
-        else if (Input.GetKeyDown(KeyCode.D))
-        {
-            MoveStep(Vector3.right);
-        }
-        else if (Input.GetKeyDown(KeyCode.W))
-        {
-            MoveStep(Vector3.forward);
-        }
+        _fsm.Driver.Update.Invoke();
     }
-
-    private void MoveStep(Vector3 movement)
-    {
-        _transform.Translate(movement * unitSize);
-    }
+    
     
 }

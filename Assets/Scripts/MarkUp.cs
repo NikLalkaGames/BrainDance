@@ -7,30 +7,31 @@ public class MarkUp : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    public Field field;
-
     public Vector3 currentCellPos;
-    
+    public int cellRow;
+    public int cellColumn;
+    public FieldCell[,] fieldCells;
     
     void Awake()
     {
-        var fieldCells = field.fieldCells;
-
+        fieldCells = new FieldCell[cellRow, cellColumn];
         fieldCells[0, 0] = new FieldCell()
         {
             globalCoordinates = currentCellPos
         };
         float initialxPos = currentCellPos.x;
-        for (int i = 0; i < field.cellRow; i++)
+        for (int i = 0; i < cellRow; i++)
         {
-            for (int j = 0; j < field.cellColumn; j++)
+            for (int j = 0; j < cellColumn; j++)
             {
                 fieldCells[i, j] = new FieldCell();
                 fieldCells[i, j].globalCoordinates = currentCellPos;
 
                 fieldCells[i, j].isBusy = false;
+                fieldCells[i, j].unitType = UnitType.None;
                 currentCellPos.x += 2;
-                Debug.Log(fieldCells[i, j].globalCoordinates);
+                
+                //Debug.Log(fieldCells[i, j].globalCoordinates);
             }
 
             currentCellPos.x = initialxPos;

@@ -1,4 +1,5 @@
-﻿fileFormatVersion: 2
+<<<<<<< HEAD
+fileFormatVersion: 2
 guid: d0603b6d5186471b96c778c3949c7ce2
 folderAsset: yes
 DefaultImporter:
@@ -6,3 +7,8 @@ DefaultImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+=======
+﻿fileFormatVersion: 2
+guid: 8bc10563d6c24e3e9c3697258e38d298
+timeCreated: 1633209916
+>>>>>>> origin/Nick

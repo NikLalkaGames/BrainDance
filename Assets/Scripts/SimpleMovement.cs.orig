@@ -1,9 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+<<<<<<< HEAD
+using Data;
+=======
 using System.Diagnostics;
 using System.Linq.Expressions;
 using MonsterLove.StateMachine;
+>>>>>>> origin/Nick
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
@@ -18,6 +22,10 @@ public class SimpleMovement : MonoBehaviour
     [SerializeField] private float unitSize;
     public StateMachine<States, StateDriverRunner> _fsm;
     private Transform _transform;
+<<<<<<< HEAD
+
+    public DialogueText dialogueText;
+=======
     private Animator anim;
 
 
@@ -102,10 +110,15 @@ public class SimpleMovement : MonoBehaviour
         _fsm.ChangeState(States.PreAI);
 
     }
+>>>>>>> origin/Nick
     
 
     void PreAI_Enter()
     {
+<<<<<<< HEAD
+        _transform = transform;
+        dialogueText.ParseTextFile();
+=======
         if (roachNumber == currentNumber)
         {
             _fsm.ChangeState(States.ActionSelection);
@@ -114,6 +127,7 @@ public class SimpleMovement : MonoBehaviour
         {
             _fsm.ChangeState(States.EnemyTurn);
         }
+>>>>>>> origin/Nick
     }
 
 
@@ -266,13 +280,10 @@ public class SimpleMovement : MonoBehaviour
     }
 
 
-    public DialogueText dialogueText;
-    
     void Start()
     {
         _fsm.ChangeState(States.Init);
         _transform = transform;
-        dialogueText.ParseTextFile();
     }
 
     private void Update()

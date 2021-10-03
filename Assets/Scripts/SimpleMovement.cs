@@ -41,7 +41,7 @@ public class SimpleMovement : MonoBehaviour
     public int nextcolumn;
 
     public int roachNumber;
-    private int currentNumber;
+    public int currentNumber;
 
     //OTHER
     public MarkUp markUp;
@@ -210,7 +210,7 @@ public class SimpleMovement : MonoBehaviour
         direction = Random.Range(1, 4);
     }
 
-    void EnemyTurn_Update()
+    /*void EnemyTurn_Update()
     {
         while (dirSuccess != true)
         {
@@ -248,7 +248,7 @@ public class SimpleMovement : MonoBehaviour
 
             _fsm.ChangeState(States.PreAI);
         }
-    }
+    }*/
 
     #endregion
 
@@ -263,7 +263,7 @@ public class SimpleMovement : MonoBehaviour
         _fsm = new StateMachine<States, StateDriverRunner>(this);
         anim = GetComponent<Animator>();
 
-        roachNumber = GetComponentInParent<RoachNumber>().number;
+        currentNumber = GetComponentInParent<RoachNumber>().number;
     }
 
 
@@ -273,7 +273,7 @@ public class SimpleMovement : MonoBehaviour
     {
         _fsm.ChangeState(States.Init);
         _transform = transform;
-        dialogueText.ParseTextFile();
+        // dialogueText.ParseTextFile();
     }
 
     private void Update()

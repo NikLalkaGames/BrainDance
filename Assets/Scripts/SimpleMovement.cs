@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using Data;
 using MonsterLove.StateMachine;
 using UnityEngine;
 using Debug = UnityEngine.Debug;

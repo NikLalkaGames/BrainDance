@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
-    [SerializeField] private DialogueText _dialogueText;
+    [SerializeField] private DialogueText dialogueText;
 
     private Queue<DialogueText.Message> _dialogueQueue;
 
@@ -17,8 +17,9 @@ public class DialogueManager : MonoBehaviour
 
     private void Start()
     {
+        // dialogueText.ParseTextFile();
         _dialogueQueue = new Queue<DialogueText.Message>();
-        foreach (var message in _dialogueText.messages)
+        foreach (var message in dialogueText.messages)
         {
             _dialogueQueue.Enqueue(message);
         }

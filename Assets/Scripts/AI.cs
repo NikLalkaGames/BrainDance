@@ -16,7 +16,7 @@ public class AI : MonoBehaviour
     public RoachNumber roach;
     public MarkUp markUp;
     public SimpleMovement player;
-    
+    public Animator anim;
     
     private int h;
     private int i;
@@ -24,6 +24,8 @@ public class AI : MonoBehaviour
 
     private int row;
     private int column;
+
+    public int dance;
 
     public enum States
     {
@@ -36,10 +38,12 @@ public class AI : MonoBehaviour
     private void Awake()
     {
         _fsm = new StateMachine<States, StateDriverRunner>(this);
+        anim = GetComponent<Animator>();
     }
 
     void Start()
     {
+        dance = 0;
         _fsm.ChangeState(States.Init);
     }
 
@@ -54,6 +58,16 @@ public class AI : MonoBehaviour
             markUp.fieldCells[row, column].unitType = UnitType.Player;
             gameObject.SetActive(false);
         }
+
+        if (dance > 0)
+        {
+            anim.SetBool("dance", true);
+        }
+        else
+        {
+            anim.SetBool("dance", false);
+        }
+        
     }
 
 
@@ -91,14 +105,14 @@ public class AI : MonoBehaviour
     
     void Decision()
     {
-        if ((markUp.fieldCells[row + 1, column].isBusy != true)
+        if (((markUp.fieldCells[row + 1, column].isBusy != true))
             || (markUp.fieldCells[row - 1, column].isBusy != true)
             || (markUp.fieldCells[row, column + 1].isBusy != true)
             || (markUp.fieldCells[row, column - 1].isBusy != true))
         {
             do
             {
-                h = Random.Range(1, 4);
+                h = Random.Range(1, 5);
 
                 switch (h)
                 {
@@ -121,7 +135,7 @@ public class AI : MonoBehaviour
 
                 }
 
-            } while (markUp.fieldCells[row + i, column + j].isBusy != false);
+            } while ((markUp.fieldCells[row + i, column + j].unitType != UnitType.None) && (markUp.fieldCells[row + i, column + j].unitType != UnitType.Goal));
         }
         else
         {
@@ -133,7 +147,7 @@ public class AI : MonoBehaviour
 
         markUp.fieldCells[row + i, column + j].isBusy = true;
         markUp.fieldCells[row + i, column + j].unitType = UnitType.Roach;
-
+        
         row = row + i;
         column = column + j;
         StartCoroutine(Lerp());
@@ -142,11 +156,22 @@ public class AI : MonoBehaviour
     
     IEnumerator Turn()
     {
-        yield return new WaitForSeconds(1.5f);
-        Decision();
-        yield return new WaitForSeconds(0.5f);
-        roach.number++;
-        _fsm.ChangeState(States.Wait);
+        if (dance == 0)
+        {
+            yield return new WaitForSeconds(1.5f);
+            Decision();
+            yield return new WaitForSeconds(0.5f);
+            roach.number++;
+            _fsm.ChangeState(States.Wait);
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.3f);
+            roach.number++;
+            dance--;
+            _fsm.ChangeState(States.Wait);
+        }
+        
     }
 
     IEnumerator Lerp()
@@ -158,5 +183,25 @@ public class AI : MonoBehaviour
             yield return null;
         }
     }
-    
+
+    private void OnEnable()
+    {
+        row = Random.Range(1, 8) + 6;
+        column = Random.Range(1, 8) + 6;
+        
+        while (markUp.fieldCells[row, column].isBusy != false)
+        {
+            row = Random.Range(1, 8) + 6;
+            column = Random.Range(1, 8) + 6;
+        }
+        transform.position = markUp.fieldCells[row, column].globalCoordinates;
+        markUp.fieldCells[row, column].isBusy = true;
+        markUp.fieldCells[row, column].unitType = UnitType.Roach;
+
+    }
+    private void OnDisable()
+    {
+        markUp.fieldCells[row, column].isBusy = false;
+        markUp.fieldCells[row, column].unitType = UnitType.None;
+    }
 }

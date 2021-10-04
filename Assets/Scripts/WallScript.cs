@@ -40,14 +40,28 @@ public class WallScript : MonoBehaviour
         markUp.fieldCells[row, column].unitType = UnitType.Wall;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
+
+    private void OnEnable()
+    {
+        row = Random.Range(1, 8) + 6;
+        column = Random.Range(1, 8) + 6;
+
+        while (markUp.fieldCells[row, column].isBusy != false)
+        {
+            row = Random.Range(1, 8) + 6;
+            column = Random.Range(1, 8) + 6;
+        }
+        
+        transform.position = markUp.fieldCells[row, column].globalCoordinates;
+        markUp.fieldCells[row, column].isBusy = true;
+        markUp.fieldCells[row, column].unitType = UnitType.Wall;
+    }
+    private void OnDisable()
+    {
+        markUp.fieldCells[row, column].isBusy = false;
+        markUp.fieldCells[row, column].unitType = UnitType.None;
+    }
+
     void Start()
     {
         _fsm.ChangeState(States.Init);

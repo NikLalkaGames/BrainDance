@@ -14,6 +14,8 @@ public class TileBehaviour : MonoBehaviour
     public int row;
     public int column;
 
+    private GameObject[] gos;
+    
     private string dir;
     
     void Start()
@@ -87,6 +89,8 @@ public class TileBehaviour : MonoBehaviour
                     GetComponent<MeshRenderer>().enabled = true;
                 }
             }
+            
+            
         }
 
         //Debug.Log("IS BUSY:" + markUp.fieldCells[row,column].isBusy);

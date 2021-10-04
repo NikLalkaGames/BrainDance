@@ -1,5 +1,54 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!65 &2117923175
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132147878828040}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.02455187, y: 0.013085773, z: 0.013135788}
+  m_Center: {x: 0.000000007450581, y: 2.4286129e-16, z: 6.984918e-10}
+--- !u!95 &2117923177
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132147878828040}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 920ab8472fd42944c8eaf4377dbda8c6, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2117923176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132147878828040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f712ea61b8631964f9c6b322001047be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  SS: 0
+  TT: {fileID: 0}
+  TTT: {fileID: 0}
+  can: 0
 --- !u!1 &3414712782141104246
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,8 +203,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: slot_spinner 2
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1498c1e041ebe9e4b992a247c5341122, type: 3}
+      propertyPath: m_TagString
+      value: Spinner2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1498c1e041ebe9e4b992a247c5341122, type: 3}
+--- !u!1 &919132147878828040 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1498c1e041ebe9e4b992a247c5341122, type: 3}
+  m_PrefabInstance: {fileID: 1945675097}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &543450651796292274 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1498c1e041ebe9e4b992a247c5341122, type: 3}

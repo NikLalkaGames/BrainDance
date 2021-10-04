@@ -21,6 +21,8 @@ public class SimpleMovement : MonoBehaviour
     public StateMachine<States, StateDriverRunner> _fsm;
     private Transform _transform;
     private Animator anim;
+    public Activation active;
+    
     
     public enum States
     {
@@ -54,7 +56,14 @@ public class SimpleMovement : MonoBehaviour
     public bool disable;
     private bool dirSuccess;
     public bool choose;
-
+    public bool dance;
+    public bool dod;
+    public bool dod1;
+    public bool dod2;
+    public bool can;
+    public bool restart;
+    
+    
     public string action;
 
     public List<Vector3> positions;
@@ -111,25 +120,18 @@ public class SimpleMovement : MonoBehaviour
         markUp.fieldCells[row, column].unitType = UnitType.Player;
 
         Debug.Log("ACTION");
-        
+
+        dod = true;
+        dod1 = true;
+        dod2 = true;
     }
 
     void ActionSelection_Update()
     {
-        //CARD'S EFFECT TRIGGER
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+
+        if (can == true)
         {
-            action = "MoveOneCell";
-            _fsm.ChangeState(States.EffectSelection);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            action = "MoveTwoCells";
-            _fsm.ChangeState(States.EffectSelection);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            action = "RunTwoCells";
+            can = false;
             _fsm.ChangeState(States.EffectSelection);
         }
     }
@@ -145,6 +147,24 @@ public class SimpleMovement : MonoBehaviour
 
     void EffectSelection_Update()
     {
+        if (restart == true)
+        {
+            restart = false;
+            active.active = true;
+            _fsm.ChangeState(States.AiTurn);
+        }
+        
+        if (dance == true)
+        {
+            dance = false;
+            GameObject[] gos = GameObject.FindGameObjectsWithTag("Capsules");
+                foreach (GameObject go in gos)
+                {
+                    go.GetComponent<AI>().dance = 2;
+                }
+                _fsm.ChangeState(States.AiTurn);
+        }
+        
         //AFTER DIRECTION SELECT
         if (choose == true)
         {
@@ -219,10 +239,7 @@ public class SimpleMovement : MonoBehaviour
 
     void Goal_Update()
     {
-        if (disable == true)
-        {
-            _fsm.ChangeState(States.AiTurn);
-        }
+
     }
 
     
@@ -238,6 +255,30 @@ public class SimpleMovement : MonoBehaviour
         anim = GetComponent<Animator>();
         
     }
+
+    private void OnEnable()
+    {
+        //GENERATION PROCESS
+        row = Random.Range(1, 8) + 6;
+        column = Random.Range(1, 8) + 6;
+
+        while (markUp.fieldCells[row, column].isBusy != false)
+        {
+            row = Random.Range(1, 8) + 6;
+            column = Random.Range(1, 8) + 6;
+        }
+        
+        transform.position = markUp.fieldCells[row, column].globalCoordinates;
+        markUp.fieldCells[row, column].isBusy = true;
+        markUp.fieldCells[row, column].unitType = UnitType.Player;
+
+    }
+
+    private void OnDisable()
+    {
+        markUp.fieldCells[row, column].isBusy = false;
+        markUp.fieldCells[row, column].unitType = UnitType.None;
+    }
     
     public DialogueText dialogueText;
     
@@ -251,6 +292,11 @@ public class SimpleMovement : MonoBehaviour
     private void Update()
     {
         _fsm.Driver.Update.Invoke();
+
+        if (disable == true)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     /*IEnumerator FailedLerp()

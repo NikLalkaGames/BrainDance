@@ -10,11 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 040db5aa1b1a40d1b704f2f84d180e4d, type: 3}
-  m_Name: DialogueText
+  m_Name: SpeakWithYourselfAtStreet
   m_EditorClassIdentifier: 
-  textFile: {fileID: 4900000, guid: e4e5b9e86186edb47bb2dac90e1bf270, type: 3}
-  messages:
-  - speakersName: 'Maria '
-    text: "Welcome to the board, captain.\r"
-  - speakersName: 'Eric '
-    text: Ok. Thanks a lot.
+  textFile: {fileID: 4900000, guid: dcdcb998bb3ff7442809af86158764c9, type: 3}
+  messages: []
+  endsWithChoices: 0

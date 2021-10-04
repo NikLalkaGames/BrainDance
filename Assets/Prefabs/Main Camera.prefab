@@ -98,5 +98,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetNovel: {fileID: 11400000, guid: e508268745b619b48bdcbba27202218f, type: 2}
   targetField: {fileID: 11400000, guid: 28264a76096796d438bdf3b4581055b5, type: 2}
-  movementSpeed: 0.5
-  rotationSpeed: 0.5
+  movementSpeed: 1
+  rotationSpeed: 1

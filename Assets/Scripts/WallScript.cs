@@ -26,13 +26,13 @@ public class WallScript : MonoBehaviour
 
     private void Init_Enter()
     {
-        row = Random.Range(0, 4);
-        column = Random.Range(0, 4);
+        row = Random.Range(1, 8) + 6;
+        column = Random.Range(1, 8) + 6;
 
         while (markUp.fieldCells[row, column].isBusy != false)
         {
-            row = Random.Range(0, 4);
-            column = Random.Range(0, 4);
+            row = Random.Range(1, 8) + 6;
+            column = Random.Range(1, 8) + 6;
         }
         
         transform.position = markUp.fieldCells[row, column].globalCoordinates;

@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using Data;
 using MonsterLove.StateMachine;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
@@ -20,16 +21,14 @@ public class SimpleMovement : MonoBehaviour
     public StateMachine<States, StateDriverRunner> _fsm;
     private Transform _transform;
     private Animator anim;
-
-
+    
     public enum States
     {
         Init, //Init Phase
         ActionSelection, //Card Selection Phase
         EffectSelection, //Card's Effect Phase
-        EnemyTurn, //Other Roaches Turn Phase
         Goal,
-        PreAI,
+        AiTurn,
 
         Stun //Wall Stun State
     }
@@ -37,27 +36,29 @@ public class SimpleMovement : MonoBehaviour
     //FIELD
     public int row;
     public int column;
-    public int nextrow;
-    public int nextcolumn;
+    public int rowDest;
+    public int columnDest;
 
+    public RoachNumber roach;
+    public Vector3 nextPlayable;
+    
     public int roachNumber;
-    public int currentNumber;
 
     //OTHER
     public MarkUp markUp;
-    private FieldCell lastCellPos;
-    public Vector3 slerp;
-
-
+    
     //BOOLS
     public bool changeStateToAction; //EFFECT SELECT
     public bool stuck; //STUN STATE BOOL
     public bool goalReached;
     public bool disable;
-    public bool aiTurn;
     private bool dirSuccess;
+    public bool choose;
 
+    public string action;
 
+    public List<Vector3> positions;
+    
     #endregion
 
 
@@ -72,51 +73,36 @@ public class SimpleMovement : MonoBehaviour
     void Init_Enter()
     {
         //GENERATION PROCESS
-        row = Random.Range(0, 4);
-        column = Random.Range(0, 4);
+        row = Random.Range(1, 8) + 6;
+        column = Random.Range(1, 8) + 6;
 
         while (markUp.fieldCells[row, column].isBusy != false)
         {
-            row = Random.Range(0, 4);
-            column = Random.Range(0, 4);
+            row = Random.Range(1, 8) + 6;
+            column = Random.Range(1, 8) + 6;
         }
-
-
-
+        
         transform.position = markUp.fieldCells[row, column].globalCoordinates;
         markUp.fieldCells[row, column].isBusy = true;
-        if (roachNumber == currentNumber)
-        {
-            markUp.fieldCells[row, column].unitType = UnitType.Player;
-        }
-        else
-        {
-            markUp.fieldCells[row, column].unitType = UnitType.Roach;
-        }
-
-        //Debug.Log(transform.position);
+        markUp.fieldCells[row, column].unitType = UnitType.Player;
 
 
-
-        lastCellPos = markUp.fieldCells[row, column];
-
-        _fsm.ChangeState(States.PreAI);
+        _fsm.ChangeState(States.AiTurn);
 
     }
-    
 
-    void PreAI_Enter()
+
+    void AiTurn_Enter()
     {
-        if (roachNumber == currentNumber)
+        roach.number++;
+    }
+    void AiTurn_Update()
+    {
+        if (roachNumber == roach.number)
         {
             _fsm.ChangeState(States.ActionSelection);
         }
-        else
-        {
-            _fsm.ChangeState(States.EnemyTurn);
-        }
     }
-
 
     void ActionSelection_Enter()
     {
@@ -125,16 +111,27 @@ public class SimpleMovement : MonoBehaviour
         markUp.fieldCells[row, column].unitType = UnitType.Player;
 
         Debug.Log("ACTION");
+        
     }
 
     void ActionSelection_Update()
     {
         //CARD'S EFFECT TRIGGER
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
+            action = "MoveOneCell";
             _fsm.ChangeState(States.EffectSelection);
         }
-
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            action = "MoveTwoCells";
+            _fsm.ChangeState(States.EffectSelection);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            action = "RunTwoCells";
+            _fsm.ChangeState(States.EffectSelection);
+        }
     }
 
 
@@ -142,17 +139,35 @@ public class SimpleMovement : MonoBehaviour
 
     void EffectSelection_Enter()
     {
-
+        
         Debug.Log("Enter EffectSelection");
     }
 
     void EffectSelection_Update()
     {
         //AFTER DIRECTION SELECT
+        if (choose == true)
+        {
+            choose = false;
+            _fsm.ChangeState(States.AiTurn);
+        }
+        
         if (changeStateToAction == true)
         {
+            markUp.fieldCells[row, column].isBusy = false;
+            markUp.fieldCells[row, column].unitType = UnitType.None;
+            
+            
+            row = rowDest;
+            column = columnDest;
+            
             changeStateToAction = false;
-            StartCoroutine(SuccesfulLerp(0, 0));
+            StartCoroutine(SuccesfulLerp(rowDest, columnDest));
+
+
+            
+            markUp.fieldCells[row, column].isBusy = true;
+            markUp.fieldCells[row, column].unitType = UnitType.Player;
         }
 
         if (stuck == true)
@@ -169,9 +184,7 @@ public class SimpleMovement : MonoBehaviour
     void EffectSelection_Exit()
     {
         //CLEAN PREVIOUS CELL FROM PLAYER'S DATA
-        markUp.fieldCells[row, column].isBusy = false;
-        markUp.fieldCells[row, column].unitType = UnitType.None;
-        aiTurn = true;
+
     }
 
 
@@ -179,8 +192,17 @@ public class SimpleMovement : MonoBehaviour
 
     void Stun_Enter()
     {
-        // StartCoroutine("FailedLerp");
+        markUp.fieldCells[row, column].isBusy = false;
+        markUp.fieldCells[row, column].unitType = UnitType.None;
+        
+        row = rowDest;
+        column = columnDest;
+        
+        StartCoroutine(Lerp(rowDest, columnDest));
+        
         Debug.Log("STUNED");
+        
+        anim.SetTrigger("stun");
         StartCoroutine("Timer");
 
     }
@@ -190,69 +212,21 @@ public class SimpleMovement : MonoBehaviour
 
     void Goal_Enter()
     {
-        StartCoroutine(SuccesfulLerp(0, 0));
+        StartCoroutine(SuccesfulLerpGoal(rowDest, columnDest));
         anim.SetTrigger("disappearAnim");
-
+        
     }
 
     void Goal_Update()
     {
         if (disable == true)
         {
-            gameObject.SetActive(false);
+            _fsm.ChangeState(States.AiTurn);
         }
     }
 
-
-
-    void EnemyTurn_Enter()
-    {
-        direction = Random.Range(1, 4);
-    }
-
-    /*void EnemyTurn_Update()
-    {
-        while (dirSuccess != true)
-        {
-            if ((direction == 1) && (markUp.fieldCells[row + 1, column].isBusy == false))
-            {
-                StartCoroutine(SuccesfulLerp(1, 0));
-                dirSuccess = true;
-            }
-            else if ((direction == 2) && (markUp.fieldCells[row - 1, column].isBusy == false))
-            {
-                StartCoroutine(SuccesfulLerp(-1, 0));
-                dirSuccess = true;
-            }
-            else if ((direction == 3) && (markUp.fieldCells[row, column + 1].isBusy == false))
-            {
-                StartCoroutine(SuccesfulLerp(0, 1));
-                dirSuccess = true;
-            }
-            else if ((direction == 4) && (markUp.fieldCells[row, column - 1].isBusy == false))
-            {
-                StartCoroutine(SuccesfulLerp(0, -1));
-                dirSuccess = true;
-            }
-            else if ((markUp.fieldCells[row, column - 1].isBusy == true) &&
-                     (markUp.fieldCells[row, column + 1].isBusy == true) &&
-                     (markUp.fieldCells[row + 1, column].isBusy == true) &&
-                     (markUp.fieldCells[row - 1, column].isBusy == true))
-            {
-                _fsm.ChangeState(States.PreAI);
-            }
-            else
-            {
-                direction = Random.Range(1, 4);
-            }
-
-            _fsm.ChangeState(States.PreAI);
-        }
-    }*/
-
+    
     #endregion
-
-
 
 
     #region @METHODS@
@@ -262,11 +236,9 @@ public class SimpleMovement : MonoBehaviour
     {
         _fsm = new StateMachine<States, StateDriverRunner>(this);
         anim = GetComponent<Animator>();
-
-        currentNumber = GetComponentInParent<RoachNumber>().number;
+        
     }
-
-
+    
     public DialogueText dialogueText;
     
     void Start()
@@ -281,7 +253,7 @@ public class SimpleMovement : MonoBehaviour
         _fsm.Driver.Update.Invoke();
     }
 
-    IEnumerator FailedLerp()
+    /*IEnumerator FailedLerp()
     {
         while (transform.position != markUp.fieldCells[nextrow, nextcolumn].globalCoordinates / 2)
         {
@@ -296,37 +268,47 @@ public class SimpleMovement : MonoBehaviour
                 Vector3.Lerp(transform.position, markUp.fieldCells[row, column].globalCoordinates, 0.01f);
             yield return null;
         }
-    }
+    }*/
 
     IEnumerator SuccesfulLerp(int i, int j)
     {
-        while (transform.position != markUp.fieldCells[row + i, column + j].globalCoordinates)
+        while (transform.position != markUp.fieldCells[i, j].globalCoordinates)
         {
             transform.position = Vector3.Lerp(transform.position,
-                markUp.fieldCells[row + i, column + j].globalCoordinates, 0.05f);
+                markUp.fieldCells[i, j].globalCoordinates, 0.05f);
             yield return null;
-            _fsm.ChangeState(States.ActionSelection);
+            _fsm.ChangeState(States.AiTurn);
+        }
+
+    }
+    
+    IEnumerator SuccesfulLerpGoal(int i, int j)
+    {
+        while (transform.position != markUp.fieldCells[i, j].globalCoordinates)
+        {
+            transform.position = Vector3.Lerp(transform.position,
+                markUp.fieldCells[i, j].globalCoordinates, 0.05f);
+            yield return null;
         }
 
     }
 
-    IEnumerator SuccesfulLerpAI(int i, int j)
+    IEnumerator Lerp(int i, int j)
     {
-        while (transform.position != markUp.fieldCells[row + i, column + j].globalCoordinates)
+        while (transform.position != markUp.fieldCells[i, j].globalCoordinates)
         {
             transform.position = Vector3.Lerp(transform.position,
-                markUp.fieldCells[row + i, column + j].globalCoordinates, 0.05f);
+                markUp.fieldCells[i, j].globalCoordinates, 0.05f);
             yield return null;
-            _fsm.ChangeState(States.ActionSelection);
         }
+    }
 
-        IEnumerator Timer()
+    IEnumerator Timer()
         {
             stuck = false;
-            yield return new WaitForSeconds(1.0f);
-            _fsm.ChangeState(States.EnemyTurn);
+            yield return new WaitForSeconds(3.0f);
+            _fsm.ChangeState(States.AiTurn);
         }
-
-        #endregion
-    }
+    
+    #endregion
 }

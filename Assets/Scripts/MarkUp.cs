@@ -26,9 +26,17 @@ public class MarkUp : MonoBehaviour
             {
                 fieldCells[i, j] = new FieldCell();
                 fieldCells[i, j].globalCoordinates = currentCellPos;
-
-                fieldCells[i, j].isBusy = false;
-                fieldCells[i, j].unitType = UnitType.None;
+                
+                if ((i > 6) && (i < 14) && (j > 6) && (j < 14))
+                {
+                    fieldCells[i, j].isBusy = false;
+                    fieldCells[i, j].unitType = UnitType.None;
+                }
+                else
+                {
+                    fieldCells[i, j].isBusy = true;
+                    fieldCells[i, j].unitType = UnitType.Wall;
+                }
                 currentCellPos.x += 2;
                 
                 //Debug.Log(fieldCells[i, j].globalCoordinates);

@@ -8,8 +8,10 @@ namespace Data
     public class DialogueText : ScriptableObject
     {
         public TextAsset textFile;
-        
+
         public List<Message> messages;
+
+        public bool endsWithChoices;
 
         [System.Serializable]
         public class Message

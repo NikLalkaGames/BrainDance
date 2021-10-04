@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Data;
 using TMPro;
 using UnityEngine;
@@ -8,26 +9,37 @@ using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
-    [SerializeField] private DialogueText dialogueText;
+    public Queue<DialogueText.Message> dialogueQueue;
 
-    private Queue<DialogueText.Message> _dialogueQueue;
+    [SerializeField] private Text uiCharacterName;
+    [SerializeField] private Text uiDialogue;
 
-    [SerializeField] private TextMeshProUGUI uiCharacterName;
-    [SerializeField] private TextMeshProUGUI uiDialogue;
-
-    private void Start()
+    private void Awake()
     {
-        // dialogueText.ParseTextFile();
-        _dialogueQueue = new Queue<DialogueText.Message>();
+        dialogueQueue = new Queue<DialogueText.Message>();
+    }
+
+    public void LoadDialogToQueue(DialogueText dialogueText)
+    {
+        dialogueQueue.Clear();
+        dialogueText.messages.Clear();
+        dialogueText.ParseTextFile();
+
+        // if (dialogueText.messages.Count == 0)
+        // {
+        //     dialogueText.ParseTextFile();
+        // }
+        
+        dialogueQueue = new Queue<DialogueText.Message>();
         foreach (var message in dialogueText.messages)
         {
-            _dialogueQueue.Enqueue(message);
+            dialogueQueue.Enqueue(message);
         }
     }
 
     public void ShowNextMessage()
     {
-        var message = _dialogueQueue.Dequeue();
+        var message = dialogueQueue.Dequeue();
         
         StopAllCoroutines();
 
@@ -45,6 +57,6 @@ public class DialogueManager : MonoBehaviour
             yield return new WaitForSeconds(Time.fixedDeltaTime);
         }
     }
-    
-    
+
+
 }

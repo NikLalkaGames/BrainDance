@@ -186,7 +186,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfa165c29221470aad01ec7aade285b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueText: {fileID: 11400000, guid: 90ebf2fd7d92226499b74ecdd23b0226, type: 2}
   uiCharacterName: {fileID: 3553930906211452347}
   uiDialogue: {fileID: 3553930905342772497}
 --- !u!114 &383181710
@@ -201,7 +200,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 346bac1e9f2f43fa9995d4a1f1a9ec45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  straightDialogs:
+  - {fileID: 11400000, guid: 90ebf2fd7d92226499b74ecdd23b0226, type: 2}
+  - {fileID: 11400000, guid: 50d33db72a5173e4598449a0b47a0741, type: 2}
+  dialogueBranches: []
+  answerSelection: []
   dialogueManager: {fileID: 1565984232}
+  selectionWindow: {fileID: 0}
 --- !u!1 &3553930905816585266
 GameObject:
   m_ObjectHideFlags: 0

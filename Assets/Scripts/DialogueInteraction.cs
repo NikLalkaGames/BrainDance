@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 
 public class DialogueInteraction : MonoBehaviour //, IPointerDownHandler
 {
+    public CameraTransition cam;
     private enum States
     {
         Messages,
@@ -18,8 +19,9 @@ public class DialogueInteraction : MonoBehaviour //, IPointerDownHandler
     
     private int _selectionIndex;
 
-    private int _selectedAnswer = -1;
-
+    public int _selectedAnswer;
+    public bool goalAchieved;
+    
     private int _backgroundIndex;
     
 
@@ -58,13 +60,15 @@ public class DialogueInteraction : MonoBehaviour //, IPointerDownHandler
         dialogueManager.LoadDialogToQueue(straightDialogs[_dialogIndex]);
         
         dialogueManager.ShowNextMessage();
-        
+        cam.enabled = false;
         _fsm.ChangeState(States.Messages);
     }
 
     private void Messages_Enter()
     {
         Debug.Log("Enter messages state in dialogue interaction");
+
+
     }
 
     private void Messages_Update()
@@ -99,14 +103,16 @@ public class DialogueInteraction : MonoBehaviour //, IPointerDownHandler
         
         // set values of selection window
         selectionWindow.SetActive(true);
+        cam.enabled = true;
     }
 
     private void AnswerSelection_Update()
     {
         // emulating destination of some cell in the field
-        if (Input.GetKeyDown(KeyCode.O))
+        if (goalAchieved == true)
         {
-            _selectedAnswer = Random.Range(0, 2);
+            goalAchieved = false;
+            
             _fsm.ChangeState(States.Messages);
         }
     }

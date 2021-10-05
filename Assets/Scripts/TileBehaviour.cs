@@ -162,7 +162,7 @@ public class TileBehaviour : MonoBehaviour
         {
             player.choose = true;
         }
-        else if (markUp.fieldCells[row, column].unitType == UnitType.Goal)
+        else if ((markUp.fieldCells[row, column].unitType == UnitType.Goal)  || (markUp.fieldCells[row, column].unitType == UnitType.Goal1) || (markUp.fieldCells[row, column].unitType == UnitType.Goal2))
         {
             player.rowDest = row;
             player.columnDest = column;
@@ -193,7 +193,7 @@ public class TileBehaviour : MonoBehaviour
                 player.columnDest = column + j;
                 player.changeStateToAction = true;
             }
-            else if (markUp.fieldCells[row, column].unitType == UnitType.Goal)
+            else if ((markUp.fieldCells[row, column].unitType == UnitType.Goal) || (markUp.fieldCells[row, column].unitType == UnitType.Goal1) || (markUp.fieldCells[row, column].unitType == UnitType.Goal2))
             {
                 player.rowDest = row;
                 player.columnDest = column;
@@ -208,7 +208,7 @@ public class TileBehaviour : MonoBehaviour
         {
             player.choose = true;
         }
-        else if (markUp.fieldCells[row + i, column + j].unitType == UnitType.Goal)
+        else if ((markUp.fieldCells[row + i, column + j].unitType == UnitType.Goal)  || (markUp.fieldCells[row, column].unitType == UnitType.Goal1) || (markUp.fieldCells[row, column].unitType == UnitType.Goal2))
         {
             player.rowDest = row + i;
             player.columnDest = column + j;
@@ -239,7 +239,7 @@ public class TileBehaviour : MonoBehaviour
                 player.columnDest = column + j;
                 player.stuck = true;
             }
-            else if (markUp.fieldCells[row, column].unitType == UnitType.Goal)
+            else if ((markUp.fieldCells[row, column].unitType == UnitType.Goal)  || (markUp.fieldCells[row, column].unitType == UnitType.Goal1) || (markUp.fieldCells[row, column].unitType == UnitType.Goal2))
             {
                 player.rowDest = row;
                 player.columnDest = column;
@@ -254,7 +254,7 @@ public class TileBehaviour : MonoBehaviour
         {
             player.stuck = true;
         }
-        else if (markUp.fieldCells[row + i, column + j].unitType == UnitType.Goal)
+        else if ((markUp.fieldCells[row + i, column + j].unitType == UnitType.Goal)  || (markUp.fieldCells[row, column].unitType == UnitType.Goal1) || (markUp.fieldCells[row, column].unitType == UnitType.Goal2))
         {
             player.rowDest = row + i;
             player.columnDest = column + j;

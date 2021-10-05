@@ -22,14 +22,18 @@ public class SimpleMovement : MonoBehaviour
     private Transform _transform;
     private Animator anim;
     public Activation active;
-    
-    
+
+
+    public DialogueInteraction dialog;
+
     public enum States
     {
         Init, //Init Phase
         ActionSelection, //Card Selection Phase
         EffectSelection, //Card's Effect Phase
         Goal,
+        Goal1,
+        Goal2,
         AiTurn,
 
         Stun //Wall Stun State
@@ -43,12 +47,12 @@ public class SimpleMovement : MonoBehaviour
 
     public RoachNumber roach;
     public Vector3 nextPlayable;
-    
+
     public int roachNumber;
 
     //OTHER
     public MarkUp markUp;
-    
+
     //BOOLS
     public bool changeStateToAction; //EFFECT SELECT
     public bool stuck; //STUN STATE BOOL
@@ -62,12 +66,12 @@ public class SimpleMovement : MonoBehaviour
     public bool dod2;
     public bool can;
     public bool restart;
-    
-    
+
+
     public string action;
 
     public List<Vector3> positions;
-    
+
     #endregion
 
 
@@ -90,7 +94,7 @@ public class SimpleMovement : MonoBehaviour
             row = Random.Range(1, 8) + 6;
             column = Random.Range(1, 8) + 6;
         }
-        
+
         transform.position = markUp.fieldCells[row, column].globalCoordinates;
         markUp.fieldCells[row, column].isBusy = true;
         markUp.fieldCells[row, column].unitType = UnitType.Player;
@@ -103,8 +107,10 @@ public class SimpleMovement : MonoBehaviour
 
     void AiTurn_Enter()
     {
-        roach.number++;
+        Debug.Log("AI TURN ENTER!");
+        
     }
+
     void AiTurn_Update()
     {
         if (roachNumber == roach.number)
@@ -141,7 +147,7 @@ public class SimpleMovement : MonoBehaviour
 
     void EffectSelection_Enter()
     {
-        
+
         Debug.Log("Enter EffectSelection");
     }
 
@@ -153,39 +159,40 @@ public class SimpleMovement : MonoBehaviour
             active.active = true;
             _fsm.ChangeState(States.AiTurn);
         }
-        
+
         if (dance == true)
         {
             dance = false;
             GameObject[] gos = GameObject.FindGameObjectsWithTag("Capsules");
-                foreach (GameObject go in gos)
-                {
-                    go.GetComponent<AI>().dance = 2;
-                }
-                _fsm.ChangeState(States.AiTurn);
+            foreach (GameObject go in gos)
+            {
+                go.GetComponent<AI>().dance = 2;
+            }
+
+            _fsm.ChangeState(States.AiTurn);
         }
-        
+
         //AFTER DIRECTION SELECT
         if (choose == true)
         {
             choose = false;
             _fsm.ChangeState(States.AiTurn);
         }
-        
+
         if (changeStateToAction == true)
         {
             markUp.fieldCells[row, column].isBusy = false;
             markUp.fieldCells[row, column].unitType = UnitType.None;
-            
-            
+
+
             row = rowDest;
             column = columnDest;
-            
+
             changeStateToAction = false;
             StartCoroutine(SuccesfulLerp(rowDest, columnDest));
 
 
-            
+
             markUp.fieldCells[row, column].isBusy = true;
             markUp.fieldCells[row, column].unitType = UnitType.Player;
         }
@@ -204,7 +211,7 @@ public class SimpleMovement : MonoBehaviour
     void EffectSelection_Exit()
     {
         //CLEAN PREVIOUS CELL FROM PLAYER'S DATA
-
+        roach.number++;
     }
 
 
@@ -214,14 +221,14 @@ public class SimpleMovement : MonoBehaviour
     {
         markUp.fieldCells[row, column].isBusy = false;
         markUp.fieldCells[row, column].unitType = UnitType.None;
-        
+
         row = rowDest;
         column = columnDest;
-        
+
         StartCoroutine(Lerp(rowDest, columnDest));
-        
+
         Debug.Log("STUNED");
-        
+
         anim.SetTrigger("stun");
         StartCoroutine("Timer");
 
@@ -233,16 +240,28 @@ public class SimpleMovement : MonoBehaviour
     void Goal_Enter()
     {
         StartCoroutine(SuccesfulLerpGoal(rowDest, columnDest));
-        anim.SetTrigger("disappearAnim");
-        
+
+        dialog.goalAchieved = true;
+
+        if (markUp.fieldCells[row, column].unitType == UnitType.Goal)
+        {
+            dialog._selectedAnswer = 0;
+        }
+
+        if (markUp.fieldCells[row, column].unitType == UnitType.Goal1)
+        {
+            dialog._selectedAnswer = 1;
+        }
+
+        if (markUp.fieldCells[row, column].unitType == UnitType.Goal2)
+        {
+            dialog._selectedAnswer = 2;
+        }
+
     }
 
-    void Goal_Update()
-    {
 
-    }
 
-    
     #endregion
 
 
@@ -253,7 +272,7 @@ public class SimpleMovement : MonoBehaviour
     {
         _fsm = new StateMachine<States, StateDriverRunner>(this);
         anim = GetComponent<Animator>();
-        
+
     }
 
     private void OnEnable()
@@ -267,7 +286,7 @@ public class SimpleMovement : MonoBehaviour
             row = Random.Range(1, 8) + 6;
             column = Random.Range(1, 8) + 6;
         }
-        
+
         transform.position = markUp.fieldCells[row, column].globalCoordinates;
         markUp.fieldCells[row, column].isBusy = true;
         markUp.fieldCells[row, column].unitType = UnitType.Player;
@@ -279,9 +298,9 @@ public class SimpleMovement : MonoBehaviour
         markUp.fieldCells[row, column].isBusy = false;
         markUp.fieldCells[row, column].unitType = UnitType.None;
     }
-    
+
     public DialogueText dialogueText;
-    
+
     void Start()
     {
         _fsm.ChangeState(States.Init);
@@ -327,19 +346,21 @@ public class SimpleMovement : MonoBehaviour
         }
 
     }
-    
+
     IEnumerator SuccesfulLerpGoal(int i, int j)
     {
         while (transform.position != markUp.fieldCells[i, j].globalCoordinates)
         {
-            transform.position = Vector3.Lerp(transform.position,
-                markUp.fieldCells[i, j].globalCoordinates, 0.05f);
+            transform.position = Vector3.Lerp(transform.position, markUp.fieldCells[i, j].globalCoordinates, 0.05f);
             yield return null;
+            _fsm.ChangeState(States.AiTurn);
+            
         }
 
     }
 
-    IEnumerator Lerp(int i, int j)
+
+IEnumerator Lerp(int i, int j)
     {
         while (transform.position != markUp.fieldCells[i, j].globalCoordinates)
         {

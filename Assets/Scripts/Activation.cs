@@ -5,7 +5,7 @@ using UnityEngine;
 public class Activation : MonoBehaviour
 {
     private float time;
-
+    public RoachNumber roach;
     public bool active;
     // Start is called before the first frame update
     void Start()
@@ -32,6 +32,8 @@ public class Activation : MonoBehaviour
             gameObject.transform.GetChild(2).gameObject.SetActive(true);
             gameObject.transform.GetChild(3).gameObject.SetActive(true);
             gameObject.transform.GetChild(4).gameObject.SetActive(true);
+            
+            
         }
         
             time = time - Time.deltaTime;
@@ -50,6 +52,8 @@ public class Activation : MonoBehaviour
                 gameObject.transform.GetChild(3).gameObject.SetActive(true);
                 gameObject.transform.GetChild(4).gameObject.SetActive(true);
 
+                
+                
                 time = Random.Range(30f, 46f);
             }
 
@@ -68,6 +72,8 @@ public class Activation : MonoBehaviour
                 gameObject.transform.GetChild(3).gameObject.SetActive(true);
                 gameObject.transform.GetChild(4).gameObject.SetActive(true);
 
+                
+                
                 time = Random.Range(30f, 46f);
             }
     }

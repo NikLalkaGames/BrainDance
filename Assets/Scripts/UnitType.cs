@@ -7,5 +7,7 @@
         Roach,
         Player,
         None,
-        Goal
+        Goal,
+        Goal1,
+        Goal2
     }
